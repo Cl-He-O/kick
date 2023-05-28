@@ -8,7 +8,7 @@
   "author": [
     "Cl-He-O"
   ],
-  "link": "https://github.com/Cl-He-O/mcdr-plugin-kick",
+  "link": "https://github.com/Cl-He-O/kick",
   "dependencies": {
     "mcdreforged": ">=2.1.0"
   },
