@@ -1,0 +1,16 @@
+kick:
+  help: |
+    !!kick: display this help imformation
+    !!kick <target> <optional(minutes)>: kick <target> and remove from whitelist for <minutes>
+    !!kick-list: list the names and time left for kicked players
+
+  time: "{0}h {1}m {2}s"
+
+  done: "done"
+
+  list:
+    header: "player - time lefted:"
+    line: "{0} - {1}"
+
+  permission:
+    denied: "permission denied"

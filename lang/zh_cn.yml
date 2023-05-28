@@ -1,0 +1,16 @@
+kick:
+  help: |
+    !!kick: 显示这条帮助信息
+    !!kick <目标> <可选(分钟数)>: 踢出 <目标> 并移出白名单 <分钟数>
+    !!kick-list: 列出被踢出玩家的玩家名和剩余的时间
+
+  time: "{0}h {1}m {2}s"
+
+  done: "完成"
+
+  list:
+    header: "玩家 - 时间:"
+    line: "{0} - {1}"
+
+  permission:
+    denied: "权限不足"

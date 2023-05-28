@@ -1,0 +1,18 @@
+{
+  "id": "kick",
+  "version": "0.0.0",
+  "name": "kick",
+  "description": {
+    "zh_cn": "踢人"
+  },
+  "author": [
+    "Cl-He-O"
+  ],
+  "link": "https://github.com/Cl-He-O/mcdr-plugin-kick",
+  "dependencies": {
+    "mcdreforged": ">=2.1.0"
+  },
+  "resources": [
+    "lang"
+  ]
+}
