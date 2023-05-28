@@ -35,7 +35,7 @@ def kickList_save():
 
 
 def tr(translation_key: str, *args) -> RTextMCDRTranslation:
-    ServerInterface.get_instance().rtr("kick.{}".format(translation_key), *args)
+    return ServerInterface.get_instance().rtr("kick.{}".format(translation_key), *args)
 
 
 def on_load(server: PluginServerInterface, old):
@@ -123,7 +123,7 @@ def kick(server: ServerInterface, target: str, t_ns: int):
     global kickList, kickListL
 
     with kickListL:
-        kickList[target] = t_ns
+        kickList[target] = monotonic_ns() + t_ns
 
         server.execute("whitelist remove {}".format(target))
         server.execute("kick {}".format(target))
