@@ -102,7 +102,7 @@ def on_list(src: CommandSource):
 
     with kickListL:
         for player, t in kickList.items():
-            dt = timedelta(seconds=(t - now) * nanosecond)
+            dt = (t - now) * nanosecond
 
             msg.append(tr("list.line", player, time_tr(dt).to_plain_text()))
 
