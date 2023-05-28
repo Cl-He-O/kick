@@ -29,7 +29,7 @@ def time_tr(seconds: int) -> RTextMCDRTranslation:
 
 
 def kickList_save():
-    global kickList, kickListL
+    global kickListL
     with kickListL:
         json.dump(kickList, open(config.cache_file, "w"))
 
@@ -89,6 +89,7 @@ def on_help(src: CommandSource):
 @new_thread("kick-kick")
 def on_kick(src: CommandSource, target: str, t_min: float):
     kick(src.get_server(), target, t_min * 60 / nanosecond)
+    kickList_save()
     src.reply(tr("done"))
 
 
