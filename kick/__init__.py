@@ -11,7 +11,7 @@ from typing import Dict
 import json
 
 config: Config
-CONFIG_PATH = "kick/config.json"
+CONFIG_PATH = "config/kick.json"
 
 kickList: Dict[str, int]
 kickListL = Lock()
