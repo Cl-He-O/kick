@@ -3,7 +3,7 @@ from kick.config import Config
 
 from os import path
 
-from time import monotonic_ns
+from time import monotonic_ns, sleep
 from threading import Timer, Lock
 
 from typing import Dict
@@ -21,7 +21,7 @@ Pref = "!!kick"
 nanosecond = 1e-9
 
 
-def time_tr(seconds: int) -> RTextMCDRTranslation:
+def time_tr(seconds: int) -> RTextBase:
     minutes = seconds // 60
     hours = minutes // 60
 
@@ -36,6 +36,10 @@ def kickList_save():
 
 def tr(translation_key: str, *args) -> RTextMCDRTranslation:
     return ServerInterface.get_instance().rtr("kick.{}".format(translation_key), *args)
+
+
+def say(src: CommandSource, msg):
+    src.get_server().say(msg)
 
 
 def on_load(server: PluginServerInterface, old):
@@ -58,7 +62,7 @@ def on_load(server: PluginServerInterface, old):
             lambda src: src.has_permission(config.min_permission)
         ).on_error(
             RequirementNotMet,
-            lambda src: src.reply(tr("permission.denied")),
+            lambda src: say(src, tr("permission.denied")),
             handled=True,
         )
 
@@ -83,14 +87,14 @@ def on_load(server: PluginServerInterface, old):
 
 @new_thread("kick-help")
 def on_help(src: CommandSource):
-    src.reply(tr("help"))
+    say(src, tr("help"))
 
 
 @new_thread("kick-kick")
 def on_kick(src: CommandSource, target: str, t_min: float):
     kick(src.get_server(), target, t_min * 60 / nanosecond)
     kickList_save()
-    src.reply(tr("done"))
+    say(src, tr("done"))
 
 
 @new_thread("kick-list")
@@ -105,18 +109,15 @@ def on_list(src: CommandSource):
         for player, t in kickList.items():
             dt = (t - now) * nanosecond
 
-            msg.append(tr("list.line", player, time_tr(dt).to_plain_text()))
+            msg.append(tr("list.line").format(player, time_tr(dt)))
 
-    src.reply(RTextList(msg))
+    say(src, RTextList(msg))
 
 
 def unkick_startup():
     server = ServerInterface.get_instance()
-    for player, t in kickList.items():
-        if t < monotonic_ns():
-            Timer((monotonic_ns() - t) * nanosecond, unkick, player)
-        else:
-            unkick(player)
+    for player, _ in kickList.items():
+        unkick(server, player)
 
 
 def kick(server: ServerInterface, target: str, t_ns: int):
@@ -128,11 +129,19 @@ def kick(server: ServerInterface, target: str, t_ns: int):
         server.execute("whitelist remove {}".format(target))
         server.execute("kick {}".format(target))
 
+    unkick(server, target)
+
 
 def unkick(server: ServerInterface, target: str):
     global kickList, kickListL
 
     with kickListL:
-        server.execute("whitelist add {}".format(target))
+        if kickList[target] < monotonic_ns():
+            sleep(0.1)
+            Timer(
+                (monotonic_ns() - kickList[target]) * nanosecond, unkick, player, t_ns
+            )
+        else:
+            server.execute("whitelist add {}".format(target))
 
-        kickList.pop(target)
+            kickList.pop(target)
